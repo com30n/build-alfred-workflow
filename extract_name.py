@@ -46,7 +46,7 @@ def main():
         # if the workflow run on a new release,
         # update the info plist version to match the same version
         if release_tag_name:
-            release_tag_name.replace('refs/tags/', '')
+            release_tag_name = release_tag_name.replace('refs/tags/', '')
             print("update alfred workflow with version: '%s'" % release_tag_name)
             info['version'] = release_tag_name
             plistlib.writePlist(info, info_plist)
