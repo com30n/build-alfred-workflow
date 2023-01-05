@@ -54,7 +54,7 @@ This action needs a file named `info.plist` with the metadata of your workflow i
 
 ### Example workflow
 
-On every `push` to a tag matching the pattern `v*`, [create a release](https://github.com/actions/create-release/) and [upload the workflow file](https://github.com/actions/upload-release-asset/) as an asset:
+On every `push` to a tag matching the pattern `v*`, [create a release](https://github.com/marketplace/actions/gh-release) with the workflow file attached:
 ```yaml
 name: Create Alfred Workflow
 
@@ -67,32 +67,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Build Alfred Workflow
-      id: alfred_builder
-      uses: mperezi/build-alfred-workflow@v1
-      with:
-        workflow_dir: src
-        exclude_patterns: '*.pyc *__pycache__/*'
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        draft: false
-        prerelease: false
-    - name: Upload Alfred Workflow
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.alfred_builder.outputs.workflow_file }}
-        asset_name: ${{ steps.alfred_builder.outputs.workflow_file }}
-        asset_content_type: application/zip
+      - uses: actions/checkout@v3
+      - name: Build Alfred Workflow
+        id: alfred_builder
+        uses: com30n/build-alfred-workflow@v1
+        with:
+          workflow_dir: src
+          exclude_patterns: '*.pyc *__pycache__/*'
+          custom_version: ${{ github.ref_name }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.builder.outputs.workflow_file }}
 ```
 
 ## Additional files
@@ -102,5 +88,4 @@ In addition to the files and folders contained in the `workflow_dir` some other 
 * `info.plist` (*required*)
 * `icon.png`
 * `README`, `README.md`
-
 * `LICENSE`
