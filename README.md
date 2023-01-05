@@ -72,13 +72,28 @@ jobs:
         id: alfred_builder
         uses: com30n/build-alfred-workflow@v1
         with:
-          workflow_dir: src
+          workflow_dir: .
           exclude_patterns: '*.pyc *__pycache__/*'
           custom_version: ${{ github.ref_name }}
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ${{ steps.builder.outputs.workflow_file }}
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Alfred Workflow
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.alfred_builder.outputs.workflow_file }}
+          asset_name: ${{ steps.alfred_builder.outputs.workflow_file }}
+          asset_content_type: application/zip
 ```
 
 ## Additional files
