@@ -1,4 +1,4 @@
-name: 'Build an Alfred Workflow'
+name: 'Build an Alfred Workflow [enhanced]'
 description: 'Compile contents of a workflow dir to a ZIP file with extension .alfredworkflow'
 author: 'com30n'
 branding:
