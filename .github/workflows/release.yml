@@ -11,13 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build Alfred Workflow
-        id: alfred_builder
-        uses: com30n/build-alfred-workflow@v1
-        with:
-          workflow_dir: src
-          exclude_patterns: '*.pyc *__pycache__/*'
-          template_files: "workflow_src.py"
-          custom_version: ${{ github.ref_name }}
       - name: Release
         uses: softprops/action-gh-release@v1
